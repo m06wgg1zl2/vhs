@@ -33,6 +33,8 @@ func init() {
 	rootCmd.Flags().StringP("output", "o", "", "Output file path (e.g. output.gif, output.mp4)")
 	rootCmd.Flags().BoolP("quiet", "q", false, "Quiet mode: suppress all output")
 	rootCmd.Flags().StringP("shell", "s", defaultShell, "Shell to use for executing commands")
+	// Use zsh as my preferred shell on macOS
+	rootCmd.Flags().Lookup("shell").DefValue = "/bin/zsh"
 }
 
 func run(cmd *cobra.Command, args []string) error {
