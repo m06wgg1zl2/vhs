@@ -16,7 +16,8 @@ const (
 	defaultShell = "/bin/bash"
 
 	// defaultTypingSpeed is the default delay between keystrokes.
-	defaultTypingSpeed = "50ms"
+	// Increased from 50ms to 75ms for more natural-looking recordings.
+	defaultTypingSpeed = "75ms"
 )
 
 var rootCmd = &cobra.Command{
