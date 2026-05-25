@@ -13,7 +13,7 @@ const (
 	Version = "0.1.0"
 
 	// defaultShell is the default shell to use for executing commands.
-	defaultShell = "/bin/zsh"
+	defaultShell = "/bin/bash"
 
 	// defaultTypingSpeed is the default delay between keystrokes.
 	// Increased from 50ms to 75ms for more natural-looking recordings.
