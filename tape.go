@@ -42,6 +42,7 @@ const (
 )
 
 // commandNames maps string tokens to CommandType values.
+// Note: keys are all lowercase; token matching is case-insensitive.
 var commandNames = map[string]CommandType{
 	"output":     CommandOutput,
 	"set":        CommandSet,
@@ -77,8 +78,16 @@ func ParseTape(path string) (*Tape, error) {
 		lineNum++
 		line := strings.TrimSpace(scanner.Text())
 
-		// Skip comments and blank lines
+		// Skip comments and blank lines.
+		// Also skip inline comments: if a line contains " #", treat
+		// everything from that point onward as a comment.
 		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		if idx := strings.Index(line, " #"); idx != -1 {
+			line = strings.TrimSpace(line[:idx])
+		}
+		if line == "" {
 			continue
 		}
 
