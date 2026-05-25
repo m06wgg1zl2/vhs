@@ -13,7 +13,7 @@ const (
 	Version = "0.1.0"
 
 	// defaultShell is the default shell to use for executing commands.
-	defaultShell = "/bin/bash"
+	defaultShell = "/bin/zsh"
 
 	// defaultTypingSpeed is the default delay between keystrokes.
 	// Increased from 50ms to 75ms for more natural-looking recordings.
@@ -33,8 +33,6 @@ func init() {
 	rootCmd.Flags().StringP("output", "o", "", "Output file path (e.g. output.gif, output.mp4)")
 	rootCmd.Flags().BoolP("quiet", "q", false, "Quiet mode: suppress all output")
 	rootCmd.Flags().StringP("shell", "s", defaultShell, "Shell to use for executing commands")
-	// Use zsh as my preferred shell on macOS
-	rootCmd.Flags().Lookup("shell").DefValue = "/bin/zsh"
 }
 
 func run(cmd *cobra.Command, args []string) error {
