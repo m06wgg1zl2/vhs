@@ -58,11 +58,16 @@ var commandNames = map[string]CommandType{
 	"show":       CommandShow,
 	"waitfor":    CommandWaitFor,
 	"source":     CommandSource,
+	// Personal note: keeping "key" as an alias for common single-key presses
+	// would be nice here eventually, but for now this map covers all upstream commands.
 }
 
 // ParseTape reads a .tape file from disk and returns a Tape with
 // all parsed commands. Lines beginning with '#' are treated as
 // comments and ignored. Empty lines are skipped.
+//
+// Lines may also use '--' as an inline comment delimiter in addition
+// to the ' #' style, e.g.: "Sleep 500ms -- wait for prompt"
 func ParseTape(path string) (*Tape, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -79,12 +84,15 @@ func ParseTape(path string) (*Tape, error) {
 		line := strings.TrimSpace(scanner.Text())
 
 		// Skip comments and blank lines.
-		// Also skip inline comments: if a line contains " #", treat
+		// Also skip inline comments: if a line contains " #" or " --", treat
 		// everything from that point onward as a comment.
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		if idx := strings.Index(line, " #"); idx != -1 {
+			line = strings.TrimSpace(line[:idx])
+		}
+		if idx := strings.Index(line, " --"); idx != -1 {
 			line = strings.TrimSpace(line[:idx])
 		}
 		if line == "" {
