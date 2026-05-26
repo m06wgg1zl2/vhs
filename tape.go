@@ -60,6 +60,9 @@ var commandNames = map[string]CommandType{
 	"source":     CommandSource,
 	// Personal note: keeping "key" as an alias for common single-key presses
 	// would be nice here eventually, but for now this map covers all upstream commands.
+	//
+	// Also considering adding "pause" as an alias for "sleep" since I keep
+	// typing it wrong in my tape files.
 }
 
 // ParseTape reads a .tape file from disk and returns a Tape with
@@ -68,6 +71,9 @@ var commandNames = map[string]CommandType{
 //
 // Lines may also use '--' as an inline comment delimiter in addition
 // to the ' #' style, e.g.: "Sleep 500ms -- wait for prompt"
+//
+// Note: '//' is also supported as an inline comment delimiter for
+// familiarity if you're used to C-style or Go-style comments.
 func ParseTape(path string) (*Tape, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -84,8 +90,8 @@ func ParseTape(path string) (*Tape, error) {
 		line := strings.TrimSpace(scanner.Text())
 
 		// Skip comments and blank lines.
-		// Also skip inline comments: if a line contains " #" or " --", treat
-		// everything from that point onward as a comment.
+		// Also skip inline comments: if a line contains " #", " --", or " //",
+		// treat everything from that point onward as a comment.
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -93,6 +99,10 @@ func ParseTape(path string) (*Tape, error) {
 			line = strings.TrimSpace(line[:idx])
 		}
 		if idx := strings.Index(line, " --"); idx != -1 {
+			line = strings.TrimSpace(line[:idx])
+		}
+		// Personal addition: support '//' as an inline comment delimiter.
+		if idx := strings.Index(line, " //"); idx != -1 {
 			line = strings.TrimSpace(line[:idx])
 		}
 		if line == "" {
@@ -116,20 +126,4 @@ func ParseTape(path string) (*Tape, error) {
 // parseLine converts a single non-empty, non-comment line into a Command.
 func parseLine(line string) (Command, error) {
 	parts := strings.SplitN(line, " ", 2)
-	token := strings.ToLower(parts[0])
-
-	cmdType, ok := commandNames[token]
-	if !ok {
-		return Command{}, fmt.Errorf("unknown command %q", parts[0])
-	}
-
-	args := ""
-	if len(parts) > 1 {
-		args = strings.TrimSpace(parts[1])
-	}
-
-	return Command{
-		Type: cmdType,
-		Args: args,
-	}, nil
-}
+	token := strings
