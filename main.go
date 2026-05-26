@@ -53,6 +53,11 @@ func run(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("tape file not found: %s", tapeFile)
 	}
 
+	// Also check that the tape file has a .tape extension, just as a sanity check.
+	if len(tapeFile) < 5 || tapeFile[len(tapeFile)-5:] != ".tape" {
+		log.Warn("tape file does not have a .tape extension", "file", tapeFile)
+	}
+
 	output, _ := cmd.Flags().GetString("output")
 	shell, _ := cmd.Flags().GetString("shell")
 
